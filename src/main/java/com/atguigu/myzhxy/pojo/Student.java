@@ -15,9 +15,9 @@ public class Student {
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
     private String sno;
-    private Integer name;
-    private char gender;
-    private String passsword;
+    private String name;
+    private char gender='男';//默认值
+    private String password;
     private String email;
     private String telephone;
     private String address;

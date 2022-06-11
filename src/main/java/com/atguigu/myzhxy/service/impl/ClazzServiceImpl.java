@@ -27,7 +27,7 @@ public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements
            //班级名称条件 拼接
            String name = clazz.getName();
            if (!StringUtils.isEmpty(name)) {
-               queryWrapper.eq("name", name);
+               queryWrapper.like("name", name);
            }
 
            //年级名称条件 拼接
