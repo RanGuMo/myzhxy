@@ -21,6 +21,14 @@ public class ClazzController {
     @Autowired
     private ClazzService clazzService;
 
+    @ApiOperation("获取所有班级的Json")
+    @GetMapping("/getClazzs")
+    public Result getClazzs(){
+        List<Clazz> list = clazzService.list();
+        return Result.ok(list);
+    }
+
+
     @ApiOperation("删除一个或者批量删除班级信息")
     @DeleteMapping("/deleteClazz")
     public Result deleteClazz(
