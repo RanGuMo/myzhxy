@@ -12,12 +12,25 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Api(tags = "班级管理控制器")
 @RestController
 @RequestMapping("/sms/clazzController")
 public class ClazzController {
     @Autowired
     private ClazzService clazzService;
+
+    @ApiOperation("删除一个或者批量删除班级信息")
+    @DeleteMapping("/deleteClazz")
+    public Result deleteClazz(
+            @ApiParam("要删除的班级id的Json数组")@RequestBody List<Integer> ids
+            ){
+        clazzService.removeByIds(ids);
+        return Result.ok();
+    }
+
+
 
 
     @ApiOperation("新增或者修改班级信息")
