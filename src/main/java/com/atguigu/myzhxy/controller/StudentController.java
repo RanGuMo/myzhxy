@@ -3,6 +3,7 @@ package com.atguigu.myzhxy.controller;
 
 import com.atguigu.myzhxy.pojo.Student;
 import com.atguigu.myzhxy.service.StudentService;
+import com.atguigu.myzhxy.util.MD5;
 import com.atguigu.myzhxy.util.Result;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,10 +11,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "学生管理控制器")
 @RestController
@@ -22,6 +21,24 @@ public class StudentController {
 
     @Autowired
     private StudentService studentService;
+
+
+    @ApiOperation("添加或修改学生信息")
+    @PostMapping("/addOrUpdateStudent")
+    public Result addOrUpdateStudent(
+            @ApiParam("Json转换后段Student数据模型") @RequestBody Student student
+    ){
+        //如果新增学生信息，需要对密码进行加密
+        if (!StringUtils.isEmpty(student.getPassword())){
+            student.setPassword(MD5.encrypt(student.getPassword()));
+        }
+        //保存学生信息进入数据库
+        studentService.saveOrUpdate(student);
+        return Result.ok();
+
+    }
+
+
 
     // /sms/studentController/getStudentByOpr/1/3
     @ApiOperation("查询学生信息，分页带条件")
