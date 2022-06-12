@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Api(tags = "学生管理控制器")
 @RestController
 @RequestMapping("/sms/studentController")
@@ -21,6 +23,15 @@ public class StudentController {
 
     @Autowired
     private StudentService studentService;
+
+    @ApiOperation("删除一个或者批量删除学生信息")
+    @DeleteMapping("/delStudentById")
+    public Result delStudentById(
+            @ApiParam("要删除的学生id的Json数组")@RequestBody List<Integer> ids
+    ){
+        studentService.removeByIds(ids);
+        return Result.ok();
+    }
 
 
     @ApiOperation("添加或修改学生信息")
