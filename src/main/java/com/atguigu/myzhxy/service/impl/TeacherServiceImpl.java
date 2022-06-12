@@ -6,6 +6,9 @@ import com.atguigu.myzhxy.pojo.Teacher;
 import com.atguigu.myzhxy.service.TeacherService;
 import com.atguigu.myzhxy.util.MD5;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,5 +33,28 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
         queryWrapper.eq("id",userId);
         return baseMapper.selectOne(queryWrapper);
 
+    }
+
+    @Override
+    public IPage<Teacher> getTeachersByOpr(Page<Teacher> page, Teacher teacher) {
+        QueryWrapper<Teacher> queryWrapper = new QueryWrapper();
+        if(teacher != null){
+            //班级名称条件
+            String clazzName = teacher.getClazzName();
+            if (!StringUtils.isEmpty(clazzName)) {
+                queryWrapper.eq("clazz_name",clazzName);
+            }
+            //教师名称条件
+            String teacherName = teacher.getName();
+            if(!StringUtils.isEmpty(teacherName)){
+                queryWrapper.like("name",teacherName);
+            }
+            queryWrapper.orderByDesc("id");
+            queryWrapper.orderByAsc("name");
+        }
+
+        IPage<Teacher> teacherPage = baseMapper.selectPage(page, queryWrapper);
+
+        return teacherPage;
     }
 }

@@ -31,7 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-@Api(tags = "系统控制器")
+@Api(tags = "系统管理控制器")
 @RestController
 @RequestMapping("/sms/system")
 public class SystemController {

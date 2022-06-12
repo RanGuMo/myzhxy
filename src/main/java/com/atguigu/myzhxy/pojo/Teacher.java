@@ -15,7 +15,7 @@ public class Teacher {
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
     private String tno;
-    private Integer name;
+    private String name;
     private char gender;
     private String password;
     private String email;
