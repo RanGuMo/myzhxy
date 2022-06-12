@@ -8,10 +8,8 @@ import com.atguigu.myzhxy.pojo.Teacher;
 import com.atguigu.myzhxy.service.AdminService;
 import com.atguigu.myzhxy.service.StudentService;
 import com.atguigu.myzhxy.service.TeacherService;
-import com.atguigu.myzhxy.util.CreateVerifiCodeImage;
-import com.atguigu.myzhxy.util.JwtHelper;
-import com.atguigu.myzhxy.util.Result;
-import com.atguigu.myzhxy.util.ResultCodeEnum;
+import com.atguigu.myzhxy.util.*;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -42,6 +40,61 @@ public class SystemController {
     private StudentService studentService;
     @Autowired
     private TeacherService teacherService;
+
+
+    @ApiOperation("修改密码")
+    @PostMapping("/updatePwd/{oldPwd}/{newPwd}")
+    public Result updatePwd(@RequestHeader("token") String token,
+                            @PathVariable("oldPwd") String oldPwd,
+                            @PathVariable("newPwd") String newPwd){
+        boolean yOn = JwtHelper.isExpiration(token);
+        if(yOn){
+            //token过期
+            return Result.fail().message("token失效!");
+        }
+        //通过token获取当前登录的用户id
+        Long userId = JwtHelper.getUserId(token);
+        //通过token获取当前登录的用户类型
+        Integer userType = JwtHelper.getUserType(token);
+        // 将明文密码转换为暗文
+        oldPwd= MD5.encrypt(oldPwd);
+        newPwd= MD5.encrypt(newPwd);
+        if(userType == 1){
+            QueryWrapper<Admin> queryWrapper=new QueryWrapper<>();
+            queryWrapper.eq("id",userId.intValue()).eq("password",oldPwd);
+            Admin admin = adminService.getOne(queryWrapper);
+            if (null!=admin) {
+                admin.setPassword(newPwd);
+                adminService.saveOrUpdate(admin);
+            }else{
+                return Result.fail().message("原密码输入有误！");
+            }
+        }else if(userType == 2){
+            QueryWrapper<Student> queryWrapper=new QueryWrapper<>();
+            queryWrapper.eq("id",userId.intValue()).eq("password",oldPwd);
+            Student student = studentService.getOne(queryWrapper);
+            if (null!=student) {
+                student.setPassword(newPwd);
+                studentService.saveOrUpdate(student);
+            }else{
+                return Result.fail().message("原密码输入有误！");
+            }
+        }
+        else if(userType == 3){
+            QueryWrapper<Teacher> queryWrapper=new QueryWrapper<>();
+            queryWrapper.eq("id",userId.intValue()).eq("password",oldPwd);
+            Teacher teacher = teacherService.getOne(queryWrapper);
+            if (null!=teacher) {
+                teacher.setPassword(newPwd);
+                teacherService.saveOrUpdate(teacher);
+            }else{
+                return Result.fail().message("原密码输入有误！");
+            }
+        }
+        return Result.ok();
+    }
+
+
 
 
     @ApiOperation("头像上传统一入口")
