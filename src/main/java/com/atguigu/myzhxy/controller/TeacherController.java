@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class TeacherController {
     @ApiOperation("删除一个或者多个教师信息")
     @DeleteMapping("/deleteTeacher")
     public Result deleteTeacher(
-            @RequestBody List<Integer> ids
+            @ApiParam("要删除的教师id的Json数组")@RequestBody List<Integer> ids
     ){
         teacherService.removeByIds(ids);
         return Result.ok();
@@ -34,7 +35,7 @@ public class TeacherController {
     @ApiOperation("添加和修改教师信息")
     @PostMapping("/saveOrUpdateTeacher")
     public Result saveOrUpdateTeacher(
-            @RequestBody Teacher teacher
+            @ApiParam("Json转换后段Student数据模型") @RequestBody Teacher teacher
     ){
         teacherService.saveOrUpdate(teacher);
         return Result.ok();
@@ -44,9 +45,9 @@ public class TeacherController {
     @ApiOperation("获取教师信息,分页带条件")
     @GetMapping("/getTeachers/{pageNo}/{pageSize}")
     public Result getTeachers(
-            @PathVariable("pageNo") Integer pageNo,
-            @PathVariable("pageSize") Integer pageSize,
-            Teacher teacher
+            @ApiParam("页数量") @PathVariable("pageNo") Integer pageNo,
+            @ApiParam("页大小")@PathVariable("pageSize") Integer pageSize,
+            @ApiParam("查询条件转换后的后端模型")Teacher teacher
     ){
         Page<Teacher> page = new Page<>(pageNo,pageSize);
         IPage<Teacher> iPage = teacherService.getTeachersByOpr(page,teacher);
