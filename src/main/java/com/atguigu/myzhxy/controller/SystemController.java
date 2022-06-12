@@ -14,17 +14,22 @@ import com.atguigu.myzhxy.util.Result;
 import com.atguigu.myzhxy.util.ResultCodeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 @Api(tags = "系统控制器")
 @RestController
@@ -37,6 +42,35 @@ public class SystemController {
     private StudentService studentService;
     @Autowired
     private TeacherService teacherService;
+
+
+    @ApiOperation("头像上传统一入口")
+    @PostMapping("/headerImgUpload")
+    public Result headerImgUpload(
+            @ApiParam("文件二进制数据")@RequestPart("multipartFile") MultipartFile multipartFile
+    ) {
+       //使用UUID 随机生成文件名
+        String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+        //生成新的文件名字
+        //String newFileName = uuid.concat(multipartFile.getOriginalFilename());
+        String originalFilename = multipartFile.getOriginalFilename();
+        int i = originalFilename.lastIndexOf(".");
+        String newFileName = uuid.concat(originalFilename.substring(i));
+        //生成文件的保持路径（实际生产环境中 这里会使用真正的文件存储服务器）注意upload 后面要加 /
+        String portraitPath ="D:/java/IDEACode/myzhxy/target/classes/public/upload/".concat(newFileName);
+        //保存文件
+        try {
+            multipartFile.transferTo(new File(portraitPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //响应图片路径
+
+        String headerImg = "upload/".concat(newFileName);
+        return Result.ok(headerImg);
+    }
+
+
 
     @ApiOperation("通过token获取用户信息")
     @GetMapping("/getInfo")
